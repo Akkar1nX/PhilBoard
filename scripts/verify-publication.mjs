@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import { parse } from 'node-html-parser'
 
 const root = fileURLToPath(new URL('../dist/', import.meta.url))
+const deploymentBase = '/PhilBoard'
 assert(existsSync(join(root, 'index.html')), '请先执行 npm run build')
 const files = readdirSync(root, { recursive: true }).filter(f => f.endsWith('.html'))
 let papers = 0
@@ -32,7 +33,12 @@ for (const name of files) {
     const url = new URL(href, `http://localhost/${name.replace(/index\.html$/, '')}`)
     if (url.origin !== 'http://localhost')
       continue
-    let target = resolve(root, `.${decodeURIComponent(url.pathname)}`)
+    let pathname = url.pathname
+    if (pathname === deploymentBase)
+      pathname = '/'
+    else if (pathname.startsWith(`${deploymentBase}/`))
+      pathname = pathname.slice(deploymentBase.length)
+    let target = resolve(root, `.${decodeURIComponent(pathname)}`)
     if (url.pathname.endsWith('/'))
       target = join(target, 'index.html')
     else if (!existsSync(target))

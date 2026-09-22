@@ -14,10 +14,10 @@ export const themeConfig: ThemeConfig = {
     // author name
     author: 'PhilBoard',
     // site url
-    url: 'http://localhost:4321',
+    url: 'https://Akkar1nX.github.io',
     // base path
     // root directory for all pages and assets
-    base: '/', // e.g., '/blog', '/docs'
+    base: '/PhilBoard', // e.g., '/blog', '/docs'
     // favicon url
     // recommended formats: svg, png or ico
     favicon: '/icons/philboard.svg', // or https://example.com/favicon.svg
