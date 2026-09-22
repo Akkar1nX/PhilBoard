@@ -1,6 +1,14 @@
 ---
+import { getPageInfo } from '@/utils/page'
+
 const path = Astro.url.pathname
-const items = [{ href: '/', label: '本期' }, { href: '/weekly/', label: '周刊' }, { href: '/monthly/', label: '月刊' }, { href: '/about/', label: '编刊说明' }]
+const { getLocalizedPath } = getPageInfo(path)
+const items = [
+  { href: getLocalizedPath('/'), label: '本期' },
+  { href: getLocalizedPath('/weekly/'), label: '周刊' },
+  { href: getLocalizedPath('/monthly/'), label: '月刊' },
+  { href: getLocalizedPath('/about/'), label: '编刊说明' },
+]
 ---
 <nav aria-label="刊物导航" class="mb-10.5 text-4 leading-2.45em font-navbar lg:(uno-desktop-column bottom-[min(9.04rem+3.85vw,12.5rem)])">
   <ul>{items.map(item => <li><a href={item.href} aria-current={path === item.href ? 'page' : undefined} class={path === item.href ? 'highlight-static c-primary font-bold' : 'highlight-hover hover:c-primary'}>{item.label}</a></li>)}</ul>

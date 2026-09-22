@@ -2,7 +2,9 @@
 import { getCollection } from 'astro:content'
 import IssueList from '@/components/IssueList.astro'
 import Layout from '@/layouts/Layout.astro'
+import { getPageInfo } from '@/utils/page'
 
 const issues = (await getCollection('posts', ({ data }) => data.kind === 'monthly' && !data.draft)).sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf())
+const { getLocalizedPath } = getPageInfo(Astro.url.pathname)
 ---
-<Layout postTitle="月刊"><div class="edition-heading">MONTHLY EDITIONS</div><h2 class="archive-title">月刊</h2><p>以一个月为单位，重新编排重要论文、书评与讨论。入选材料完整呈现，也可以与周刊重复。</p>{issues.length ? <IssueList {issues} /> : <div class="empty-issue"><p class="issue-eyebrow">首期尚未刊出</p><p>九月结束后，再回顾本月的研究与讨论。</p><a href="/weekly/">先读周刊 <span aria-hidden="true">↗</span></a></div>}</Layout>
+<Layout postTitle="月刊"><div class="edition-heading">MONTHLY EDITIONS</div><h2 class="archive-title">月刊</h2><p>以一个月为单位，重新编排重要论文、书评与讨论。入选材料完整呈现，也可以与周刊重复。</p>{issues.length ? <IssueList {issues} /> : <div class="empty-issue"><p class="issue-eyebrow">首期尚未刊出</p><p>九月结束后，再回顾本月的研究与讨论。</p><a href={getLocalizedPath('/weekly/')}>先读周刊 <span aria-hidden="true">↗</span></a></div>}</Layout>
