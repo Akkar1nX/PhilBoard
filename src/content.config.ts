@@ -4,8 +4,12 @@ import { defineCollection } from 'astro:content'
 import { allLocales, themeConfig } from '@/config'
 
 const posts = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/issues' }),
   schema: z.object({
+    kind: z.enum(['weekly', 'monthly']),
+    number: z.number().int().positive(),
+    period: z.string(),
+    compiled: z.date(),
     // required
     title: z.string(),
     published: z.date(),
@@ -29,7 +33,7 @@ const posts = defineCollection({
 })
 
 const about = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/about' }),
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/colophon' }),
   schema: z.object({
     lang: z.enum(['', ...allLocales]).optional().default(''),
   }),

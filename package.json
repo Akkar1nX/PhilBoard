@@ -1,12 +1,12 @@
 {
-  "name": "astro-theme-retypeset",
+  "name": "philboard",
   "type": "module",
   "version": "1.0.0",
   "packageManager": "pnpm@10.33.0",
   "repository": "https://github.com/radishzzz/astro-theme-retypeset",
   "scripts": {
-    "dev": "astro check && astro dev",
-    "build": "astro check && astro build && pnpm apply-lqip",
+    "dev": "astro dev --host 127.0.0.1",
+    "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "lint": "eslint .",
@@ -14,7 +14,10 @@
     "new-post": "tsx scripts/new-post.ts",
     "apply-lqip": "tsx scripts/apply-lqip.ts",
     "format-posts": "tsx scripts/format-posts.ts",
-    "update-theme": "tsx scripts/update-theme.ts"
+    "update-theme": "tsx scripts/update-theme.ts",
+    "check": "astro check",
+    "new-issue": "node scripts/new-issue.mjs",
+    "verify": "node scripts/verify-publication.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.3",
@@ -77,7 +80,7 @@
     ]
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
+    "pre-commit": "npm exec --no -- lint-staged"
   },
   "lint-staged": {
     "*.{js,mjs,ts,astro}": "eslint --fix"

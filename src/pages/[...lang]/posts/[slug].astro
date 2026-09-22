@@ -3,7 +3,6 @@ import type { CollectionEntry } from 'astro:content'
 import type { Language } from '@/i18n/config'
 import { getCollection, render } from 'astro:content'
 import Comment from '@/components/Comment/Index.astro'
-import PostDate from '@/components/PostDate.astro'
 import TagList from '@/components/TagList.astro'
 import BackButton from '@/components/Widgets/BackButton.astro'
 import TOC from '@/components/Widgets/TOC.astro'
@@ -77,7 +76,7 @@ const { post, supportedLangs } = Astro.props
 const currentLang = getLangFromLocale(Astro.currentLocale)
 const slug = post.data.abbrlink || post.id
 const description = getPostDescription(post, 'meta')
-const { Content, headings, remarkPluginFrontmatter } = await render(post)
+const { Content, headings } = await render(post)
 ---
 
 <Layout
@@ -101,18 +100,10 @@ const { Content, headings, remarkPluginFrontmatter } = await render(post)
       </h1>
     </div>
 
-    <!-- Date -->
-    <div
-      id="post-date"
-      class="mb-17.2 block c-primary font-time"
-      transition:name={`time-${slug}${currentLang ? `-${currentLang}` : ''}`}
-      data-disable-theme-toggle-transition
-    >
-      <PostDate
-        date={post.data.published}
-        updatedDate={post.data.updated}
-        minutes={remarkPluginFrontmatter.minutes}
-      />
+    <p class="issue-eyebrow">{post.data.kind === 'weekly' ? '周刊' : '月刊'} · 第 {String(post.data.number).padStart(3, '0')} 期</p>
+    <div class="issue-dateline">
+      <p>{post.data.period}</p>
+      <p>名义刊期：{post.data.published.toISOString().slice(0, 10)} · 实际编成：{post.data.compiled.toISOString().slice(0, 10)}</p>
     </div>
     <!-- TOC -->
     {post.data.toc && <TOC headings={headings} />}

@@ -1,0 +1,23 @@
+---
+interface Props {
+  title: string
+  originalTitle: string
+  authors: string
+  journal: string
+  date: string
+  type?: string
+  url: string
+  license?: string
+  licenseUrl?: string
+  note?: string
+}
+const { title, originalTitle, authors, journal, date, type = '研究论文', url, license, licenseUrl, note } = Astro.props
+---
+<section class="paper" aria-label={title}>
+  <p class="paper-original-title" lang="en"><a href={url} target="_blank" rel="noopener noreferrer">{originalTitle} <span aria-hidden="true">↗</span></a></p>
+  <p class="paper-meta">{authors}<br />{journal} · {type} · <time datetime={date}>{date}</time></p>
+  {note && <p class="paper-note">{note}</p>}
+  <div class="abstract-original" lang="en"><p class="language-label">原摘要</p><slot name="original" /></div>
+  <div class="abstract-translation" lang="zh-CN"><p class="language-label">中文译文</p><slot name="translation" /></div>
+  {license && <p class="source-credit">原文：{authors} · <a href={licenseUrl}>{license}</a>。中文译文由本刊编译，非作者审定译本。</p>}
+</section>

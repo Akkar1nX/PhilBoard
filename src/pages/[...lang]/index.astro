@@ -1,35 +1,20 @@
 ---
-import PostList from '@/components/PostList.astro'
-import { allLocales } from '@/config'
-import { getLangFromLocale, getLangRouteParam } from '@/i18n/lang'
+import { getCollection } from 'astro:content'
+import IssueList from '@/components/IssueList.astro'
 import Layout from '@/layouts/Layout.astro'
-import { getPinnedPosts, getPostsByYear } from '@/utils/content'
 
-export async function getStaticPaths() {
-  return allLocales.map(lang => ({
-    params: { lang: getLangRouteParam(lang) },
-  }))
+export function getStaticPaths() {
+  return [{ params: { lang: undefined } }]
 }
-
-const currentLang = getLangFromLocale(Astro.currentLocale)
-const pinnedPosts = await getPinnedPosts(currentLang)
-const postsByYear = await getPostsByYear(currentLang)
+const issues = (await getCollection('posts', ({ data }) => !data.draft)).sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf())
+const weekly = issues.find(i => i.data.kind === 'weekly')
+const monthly = issues.find(i => i.data.kind === 'monthly')
 ---
-
 <Layout>
-  <!-- Pinned Posts -->
-  {pinnedPosts.length > 0 && (
-    <section class="mb-7.5">
-      <div class="uno-decorative-line" />
-      <PostList posts={pinnedPosts} lang={currentLang} pinned={true} />
-    </section>
-  )}
-
-  <!-- Regular Posts -->
-  {Array.from(postsByYear.entries(), ([_year, posts]) => (
-    <section class="mb-7.5">
-      <div class="uno-decorative-line" />
-      <PostList posts={posts} lang={currentLang} />
-    </section>
-  ))}
+  <div class="edition-heading"><span>PHILOSOPHY · A READING JOURNAL</span><span>2026</span></div>
+  <section aria-label="最新周刊">{weekly ? <IssueList issues={[weekly]} /> : <p>首期周刊尚未刊出。</p>}</section>
+  <section class="monthly-intro" aria-labelledby="monthly-title">
+    <p class="issue-eyebrow">MONTHLY REVIEW</p><h2 id="monthly-title"><a href="/monthly/">月刊</a></h2>
+    {monthly ? <IssueList issues={[monthly]} /> : <><p>每月回看值得继续阅读的论文、专著与学术讨论。</p><p class="muted">九月尚未结束，首期月刊暂未刊出。</p></>}
+  </section>
 </Layout>

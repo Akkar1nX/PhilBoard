@@ -1,0 +1,8 @@
+---
+import { getCollection } from 'astro:content'
+import IssueList from '@/components/IssueList.astro'
+import Layout from '@/layouts/Layout.astro'
+
+const issues = (await getCollection('posts', ({ data }) => data.kind === 'weekly' && !data.draft)).sort((a, b) => b.data.published.valueOf() - a.data.published.valueOf())
+---
+<Layout postTitle="周刊"><div class="edition-heading">WEEKLY EDITIONS</div><h2 class="archive-title">周刊</h2><p>近期论文、完整双语摘要与学术动态。</p><IssueList {issues} /></Layout>

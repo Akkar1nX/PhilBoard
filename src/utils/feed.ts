@@ -1,114 +1,19 @@
-import type { APIContext, ImageMetadata } from 'astro'
+import type { APIContext } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 import type { Language } from '@/i18n/config'
-import { getImage } from 'astro:assets'
 import { getCollection } from 'astro:content'
 import { Feed } from 'feed'
 import MarkdownIt from 'markdown-it'
-import { parse } from 'node-html-parser'
 import sanitizeHtml from 'sanitize-html'
 import { base, defaultLocale, themeConfig } from '@/config'
 import { ui } from '@/i18n/ui'
-import { memoize } from '@/utils/cache'
 import { getPostDescription } from '@/utils/description'
 
 const markdownParser = new MarkdownIt()
 const { title, description, i18nTitle, url, author } = themeConfig.site
 const { folo } = themeConfig.seo ?? {}
 
-// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-// Dynamically import all images from /src/content/posts/_images
-const imagesGlob = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/content/posts/_images/**/*.{jpeg,jpg,png,gif,webp}',
-)
-
-/**
- * Converts relative image paths to absolute URLs
- *
- * @param srcPath - Relative image path from markdown content
- * @param baseUrl - Site base URL
- * @returns Optimized image URL or null if processing fails
- */
-async function _getAbsoluteImageUrl(srcPath: string, baseUrl: string) {
-  // Remove relative path prefixes (../ and ./) from image source path
-  const prefixRemoved = srcPath.replace(/^(?:\.\.\/)+|^\.\//, '')
-  const absolutePath = `/src/content/posts/${prefixRemoved}`
-  const imageImporter = imagesGlob[absolutePath]
-
-  if (!imageImporter) {
-    return null
-  }
-
-  // Import image module and extract its metadata
-  const imageMetadata = await imageImporter()
-    .then(importedModule => importedModule.default)
-    .catch((error) => {
-      console.warn(`Failed to import image: ${absolutePath}`, error)
-      return null
-    })
-
-  if (!imageMetadata) {
-    return null
-  }
-
-  // Create optimized image from metadata
-  const optimizedImage = await getImage({ src: imageMetadata })
-  return new URL(optimizedImage.src, baseUrl).toString()
-}
-
-// Export memoized version
-const getAbsoluteImageUrl = memoize(_getAbsoluteImageUrl)
-
-/**
- * Fix relative image paths in HTML content
- *
- * @param htmlContent HTML content string
- * @param baseUrl Base URL of the site
- * @returns Processed HTML string with all image paths converted to absolute URLs
- */
-async function fixRelativeImagePaths(htmlContent: string, baseUrl: string): Promise<string> {
-  const htmlDoc = parse(htmlContent)
-  const images = htmlDoc.getElementsByTagName('img')
-  const imagePromises = []
-
-  for (const img of images) {
-    const src = img.getAttribute('src')
-    if (!src) {
-      continue
-    }
-
-    imagePromises.push((async () => {
-      try {
-        // Skip if not a relative path to src/content/posts/_images directory
-        if (!src.startsWith('./') && !src.startsWith('../') && !src.startsWith('_images/')) {
-          return
-        }
-
-        // Process images from src/content/posts/_images directory
-        const absoluteImageUrl = await getAbsoluteImageUrl(src, baseUrl)
-        if (absoluteImageUrl) {
-          img.setAttribute('src', absoluteImageUrl)
-        }
-      }
-      catch (error) {
-        console.warn(`Failed to convert relative image path to absolute URL: ${src}`, error)
-      }
-    })())
-  }
-
-  await Promise.all(imagePromises)
-
-  return htmlDoc.toString()
-}
-
-/**
- * >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
- * Generate a feed object supporting both RSS and Atom formats
- *
- * @param options Feed generation options
- * @param options.lang Optional language code
- * @returns A Feed instance ready for RSS or Atom output
- */
+// A feed announces issues; the complete bilingual edition is available at its link.
 export async function generateFeed({ lang }: { lang?: Language } = {}) {
   const currentUI = ui[lang as keyof typeof ui] ?? ui[defaultLocale as keyof typeof ui] ?? {}
   const siteURL = lang ? `${url}${base}/${lang}/` : `${url}${base}/`
@@ -158,20 +63,8 @@ export async function generateFeed({ lang }: { lang?: Language } = {}) {
     const slug = post.data.abbrlink || post.id
     const link = new URL(`posts/${slug}/`, siteURL).toString()
 
-    // Optimize content processing
-    const postContent = post.body
-      ? sanitizeHtml(
-          await fixRelativeImagePaths(
-            // Remove HTML comments before rendering markdown
-            markdownParser.render(post.body.replace(/<!--[\s\S]*?-->/g, '')),
-            `${url}${base}/`,
-          ),
-          {
-            // Allow <img> tags in feed content
-            allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
-          },
-        )
-      : ''
+    // Do not parse MDX components as ordinary Markdown in feed readers.
+    const postContent = sanitizeHtml(markdownParser.render(post.data.description))
 
     // publishDate -> Atom:<published>, RSS:<pubDate>
     const publishDate = new Date(post.data.published)

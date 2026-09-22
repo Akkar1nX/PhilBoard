@@ -1,89 +1,58 @@
-# Retypeset
+# PhilBoard
 
-![Cover Image](assets/images/v1/retypeset-en-desktop.webp)
-![Cover Image](assets/images/v1/retypeset-en-mobile.webp)
+供个人阅读的哲学周刊与月刊，基于 Astro 6.1.5 和 Retypeset。查阅、选编、翻译及维护均由本机 Agent 完成；没有论文数据库、全文下载器或独立模型服务。
 
-[简体中文](assets/docs/README.zh.md)｜[繁体中文](assets/docs/README.zh-tw.md)｜[日本語](assets/docs/README.ja.md)｜[Español](assets/docs/README.es.md)｜[Français](assets/docs/README.fr.md)｜[Русский](assets/docs/README.ru.md)
+## 本机运行
 
-Retypeset is a static blog theme based on the [Astro](https://astro.build/) framework. Inspired by [Typography](https://astro-theme-typography.vercel.app/), Retypeset establishes a new visual standard and reimagines the layout of all pages, creating a reading experience reminiscent of paper books, reviving the beauty of typography. Details in every sight, elegance in every space.
+要求 Node.js >= 22.12.0。依赖已安装时：
 
-## Demo
+```powershell
+cd D:\Code\PhilBoard\astro-theme-retypeset
+npm run dev
+```
 
-- [Retypeset](https://retypeset.radishzz.cc/en/)
-- [Retipografía](https://retypeset.radishzz.cc/es/)
-- [Переверстка](https://retypeset.radishzz.cc/ru/)
-- [重新编排](https://retypeset.radishzz.cc/)
-- [重新編排](https://retypeset.radishzz.cc/zh-tw/)
-- [再組版](https://retypeset.radishzz.cc/ja/)
+打开 http://127.0.0.1:4321/ 。开发预览运行于本机；关闭终端后停止。
 
-## Features
+首次安装或恢复依赖时使用主题锁定的包管理器，不使用环境中的其他 pnpm 主版本：
 
-- Built with Astro and UnoCSS
-- Support for SEO, Sitemap, OpenGraph, RSS, MDX, LaTeX, Mermaid, and TOC
-- i18n support
-- Light / Dark mode
-- Elegant view transitions
-- Rich theme customization
-- Optimized typography
-- Responsive design
-- Comment system
+```powershell
+npx --yes pnpm@10.33.0 install --frozen-lockfile
+```
 
-## Performance
+正式构建与检查：
 
-<br>
-<p align="center">
-  <a href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fretypeset.radishzz.cc%2Fen%2F&form_factor=desktop">
-    <img width="710" alt="Retypeset Lighthouse Score" src="assets/images/retypeset-lighthouse-score.svg">
-  <a>
-</p>
+```powershell
+npm run build
+npm run verify
+npm run preview -- --host 127.0.0.1 --port 4321
+```
 
-## Getting Started
+## 内容位置
 
-1. [Fork](https://github.com/radishzzz/astro-theme-retypeset/fork) this repository, or use this template to create a new repository.
-2. Run the following commands in your terminal:
+- `src/content/issues/weekly-2026-09-20.mdx`：第 001 期周刊；名义刊期 9 月 20 日，实际编成 9 月 22 日。
+- `src/content/issues/monthly-2026-09-30.mdx`：首期月刊草稿模板，尚未刊出。
+- `src/components/Paper.astro`：完整双语摘要的展示组件。
+- `src/content/colophon/about.md`：面向读者的编刊说明。
+- `docs/EDITORIAL.md`：来源书签、术语和每期编刊步骤。
+- `docs/2026-09-20-editorial-notes.md`：首期来源核对与主题试用记录。
 
-   ```bash
-   # Clone the repository
-   git clone <repository-url>
+每期是一个 MDX 文件。`kind: weekly` 或 `kind: monthly` 决定归档位置，`draft: true` 不进入首页、归档或正式构建。旧的主题示例保留供参考，但不属于刊物集合，不会生成示例页面。
 
-   # Navigate to the project directory
-   cd <repository-name>
+```powershell
+npm run new-issue -- weekly 2026-09-27
+npm run new-issue -- monthly 2026-10-31
+```
 
-   # Install pnpm globally (if not already installed)
-   npm install -g pnpm
+命令只建立草稿，Agent 查阅原始网页并直接翻译后才发布。`build` 不会上网抓取材料或调用模型。当前未启用定时任务，未来的本机 Agent 调度应调用完整编刊流程。
 
-   # Install dependencies
-   pnpm install
+## Git 与恢复
 
-   # Start the development server
-   pnpm dev
-   ```
+仓库位于本目录，保留主题原始历史。`upstream` 只用于参考主题上游；本地修改在 `philboard` 分支，不向上游推送。尚未配置用户自己的远程仓库。
 
-3. Refer to the [Theme Guide](https://retypeset.radishzz.cc/en/posts/theme-guide/) to customize your blog and create new posts.
-4. Refer to the [Astro Deployment Guides](https://docs.astro.build/en/guides/deploy/) to deploy your blog to Netlify, Vercel, or other platforms.
+日常使用 `git status` / `git diff` 查看修改，每期检查完成后提交。备份本目录（包含隐藏的 `.git`），可排除 `node_modules`、`dist` 和 `.astro`；恢复后按锁文件安装依赖并重新构建。
 
-&emsp;[![Deploy to Netlify](assets/images/deploy-netlify.svg)](https://app.netlify.com/start) [![Deploy to Vercel](assets/images/deploy-vercel.svg)](https://vercel.com/new)
+## 外观与授权
 
-## Updates
+沿用 Retypeset 的正文栏、侧栏、目录、明暗模式和响应式布局。英文优先使用本机 Athelas，中文使用思源宋体。没有将本机字体复制进仓库。
 
-Retypeset releases [new features](https://github.com/radishzzz/astro-theme-retypeset/issues/18) from time to time. Simply run `pnpm update-theme` to update the theme. If you encounter merge conflicts, please refer to [this video](https://youtu.be/lz5OuKzvadQ?si=sH_ALNgqxrYqNVQT) for manual resolution.
-
-## Credits
-
-- [Typography](https://github.com/moeyua/astro-theme-typography)
-- [Fuwari](https://github.com/saicaca/fuwari)
-- [Redefine](https://github.com/EvanNotFound/hexo-theme-redefine)
-- [AstroPaper](https://github.com/satnaing/astro-paper)
-- [heti](https://github.com/sivan/heti)
-- [EarlySummerSerif](https://github.com/GuiWonder/EarlySummerSerif)
-
-## Star History
-
-<p align="center">
-<a href="https://star-history.com/#radishzzz/astro-theme-retypeset&Date">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=radishzzz/astro-theme-retypeset&type=Date&theme=dark" />
-    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=radishzzz/astro-theme-retypeset&type=Date" />
-    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=radishzzz/astro-theme-retypeset&type=Date" />
-  </picture>
-</p>
+原主题代码遵循仓库保留的 MIT LICENSE。论文摘要版权与许可属于各自作者，见每篇署名与来源链接；中文译文是本刊编译，非原作者审定文本。原主题说明保存在 `docs/RETYPESET.md`。

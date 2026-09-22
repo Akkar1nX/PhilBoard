@@ -1,0 +1,16 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+interface Props { issues: CollectionEntry<'posts'>[] }
+const { issues } = Astro.props
+---
+<ol class="issue-list">
+  {issues.map(issue => (
+<li>
+    <p class="issue-eyebrow">{issue.data.kind === 'weekly' ? '周刊' : '月刊'} · 第 {String(issue.data.number).padStart(3, '0')} 期 <span>{issue.data.period}</span></p>
+    <h2><a href={`/posts/${issue.data.abbrlink || issue.id}/`}>{issue.data.title}</a></h2>
+    <p>{issue.data.description}</p>
+    <a class="read-issue" href={`/posts/${issue.data.abbrlink || issue.id}/`}>阅读本期 <span aria-hidden="true">↗</span></a>
+  </li>
+))}
+</ol>

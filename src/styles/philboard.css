@@ -1,0 +1,29 @@
+/* Publication additions; Retypeset supplies layout and light/dark themes. */
+.edition-heading { display:flex; justify-content:space-between; gap:1rem; padding-block:.65rem; border-block:1px solid currentColor; font: .75rem/1.6 Athelas, Georgia, serif; letter-spacing:.12em; margin-bottom:2.8rem; }
+.issue-list { list-style:none; padding:0; }
+.issue-list li { padding:0 0 3rem; }
+.issue-eyebrow { font-family:Athelas,"Source Han Sans SC",sans-serif; font-size:.8rem; letter-spacing:.055em; margin-bottom:.85rem; }
+.issue-eyebrow span { display:block; margin-top:.4rem; }
+.issue-list h2 { font-size:2rem; line-height:1.55; font-weight:600; margin-bottom:1rem; color:oklch(var(--un-preset-theme-colors-primary)); }
+.issue-list p:not(.issue-eyebrow) { font-size:1.05rem; line-height:1.9; margin-bottom:1.5rem; }
+.read-issue { border-bottom:1px solid currentColor; padding-bottom:.3rem; }
+.monthly-intro, .empty-issue { border-top:1px solid oklch(var(--un-preset-theme-colors-secondary) / .25); padding-top:2rem; margin-top:1rem; }
+.monthly-intro h2, .archive-title { font-size:1.65rem; margin-bottom:1rem; }
+.monthly-intro p, .empty-issue p { line-height:1.9; margin-bottom:1rem; }
+.muted { opacity:.75; font-size:.9rem; }
+.issue-dateline { line-height:1.9; margin:1rem 0 2.5rem; font-size:.875rem; font-family:Athelas,"Source Han Sans SC",sans-serif; }
+.heti .paper-original-title { font-size:1.22rem; line-height:1.5; margin-top:.5rem; color:oklch(var(--un-preset-theme-colors-primary)); }
+.heti .paper-meta, .heti .paper-note, .heti .source-credit { font-size:.875rem; line-height:1.8; }
+.heti .paper-meta { margin:1rem 0; font-family:Athelas,"Source Han Sans SC",sans-serif; }
+.heti .paper-note { border-left:2px solid currentColor; padding-left:1rem; }
+.heti .abstract-original { font-family:Athelas,Georgia,serif; font-size:1.125rem; line-height:1.85; }
+.heti .abstract-translation { margin-top:2rem; font-size:1.125rem; line-height:2; }
+.heti .language-label { font-size:.75rem; letter-spacing:.08em; font-family:Athelas,"Source Han Sans SC",sans-serif; opacity:.7; margin-bottom:.6rem; }
+.heti .source-credit { margin:1.5rem 0 2rem; opacity:.75; }
+.heti .paper { padding-bottom:1rem; }
+.heti h2 { border-top:1px solid oklch(var(--un-preset-theme-colors-secondary) / .25); padding-top:1.6rem; }
+.heti a { overflow-wrap:anywhere; }
+.skip-link { position:fixed; top:-5rem; left:1rem; z-index:9999; padding:1rem; background:Canvas; color:CanvasText; }
+.skip-link:focus { top:1rem; }
+@media (max-width:640px) { .issue-list h2 { font-size:1.55rem; } .edition-heading { letter-spacing:.04em; } }
+@media print { body { color:#111; background:white; } body > div { margin:0!important; max-width:100%!important; } nav, button, footer, #toc-container, .skip-link { display:none!important; } header { position:static!important; } }
